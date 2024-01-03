@@ -1,31 +1,31 @@
 class Mover {
     constructor(){
-        this.location = new MPvector(random(width), random(height))
-        this.velocity = new MPvector(0, 0)
+        this.location = new MPvector(width / 2, height - 70)
+        this.velocity = new MPvector(0, -2)
         this.acceleration = new MPvector(0, 0)
     }
     update() {
         this.velocity.add(this.acceleration)
         this.location.add(this.velocity)
         this.acceleration.mult(0)
-        const isOutofWidth = this.location.x > width || this.location.x < 0
-        const isOutofHeight = this.location.y > height || this.location.y < 0;
-
-        if (isOutofWidth){
-            this.velocity.x *= -1
-        }
-        if (isOutofHeight){
-            this.velocity.y *= -1
-        }
+        this.checkCeil()
         this.velocity.limit(5)
     }
     addForce(force){
         this.acceleration.add(force)
     }
+    bounce() {
+        this.addForce(new MPvector(0, -0.04))
+    }
     display() {
         stroke(0)
         fill(175)
-        ellipse(this.location.x, this.location.y, 16, 16)
+        ellipse(this.location.x, this.location.y, 64, 64)
+    }
+    checkCeil(){
+        if (this.location.y < 32){
+            this.addForce(new MPvector(0, 2))
+        }
     }
 }
 
@@ -70,14 +70,16 @@ class MPvector {
 
 
 function setup() {
-    createCanvas(600, 400)
+    createCanvas(300, 300)
     background(255)
     ball = new Mover()
 }
 
 function draw() {
     background(255)
-    ball.update()
     ball.display()
-    ball.addForce(new MPvector(0.1,-0.1))
+    ball.update()
+    stroke(175)
+   
+    line(ball.location.x, ball.location.y, ball.location.x, ball.location.y + 100)
 }
